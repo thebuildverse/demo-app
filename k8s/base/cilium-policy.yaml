@@ -1,0 +1,43 @@
+# # =============================================================================
+# # CiliumNetworkPolicy for demo-app
+# # =============================================================================
+# # What this allows:
+# #   INGRESS
+# #     ✓ Traffic from ingress-nginx controller (HTTP on port 80)
+# #   EGRESS
+# #     ✓ HTTPS to the internet (port 443) — external APIs, etc.
+# #     ✓ Traffic to any pod in the same namespace (e.g. redis sidecar)
+# #     ✓ DNS + K8s API are already handled by cluster-wide policies
+# # =============================================================================
+# apiVersion: cilium.io/v2
+# kind: CiliumNetworkPolicy
+# metadata:
+#   name: allow-demo-app
+#   namespace: apps-demo-app
+# spec:
+#   description: "Allow demo-app to receive ingress traffic and reach the internet"
+#   endpointSelector:
+#     matchLabels:
+#       app.kubernetes.io/name: demo-app
+#   ingress:
+#     # Allow traffic from ingress-nginx controller
+#     - fromEndpoints:
+#         - matchLabels:
+#             k8s:io.kubernetes.pod.namespace: ingress-nginx
+#             app.kubernetes.io/name: ingress-nginx
+#       toPorts:
+#         - ports:
+#             - port: "80"
+#               protocol: TCP
+#   egress:
+#     # Allow HTTPS to the internet (external APIs, webhooks, etc.)
+#     - toEntities:
+#         - world
+#       toPorts:
+#         - ports:
+#             - port: "443"
+#               protocol: TCP
+#     # Allow traffic within the same namespace (e.g. app-to-db)
+#     - toEndpoints:
+#         - matchLabels:
+#             k8s:io.kubernetes.pod.namespace: apps-demo-app
