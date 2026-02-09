@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: demo-app
-          image: sharedeus71sc6o7j.azurecr.io/demo-app:8
+          image: sharedeus71sc6o7j.azurecr.io/demo-app:1
           ports:
             - name: http
               containerPort: 80
