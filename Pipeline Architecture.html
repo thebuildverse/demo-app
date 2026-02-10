@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo App CI/CD Pipeline Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface-2: #1a2237;
+    --border: #1e2d4a;
+    --border-glow: #2563eb33;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-purple: #8b5cf6;
+    --accent-green: #10b981;
+    --accent-orange: #f59e0b;
+    --accent-red: #ef4444;
+    --accent-pink: #ec4899;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(150px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-glow-1 { top: -200px; left: -100px; background: var(--accent-blue); }
+  .bg-glow-2 { bottom: -200px; right: -100px; background: var(--accent-purple); }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeDown 0.6s ease;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  .subtitle a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(59, 130, 246, 0.4);
+  }
+
+  /* ── Diagram Canvas ── */
+  .diagram {
+    position: relative;
+    width: 100%;
+    min-height: 800px;
+  }
+
+  svg.connectors {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── Node Styles ── */
+  .node {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: center;
+    z-index: 2;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    animation: nodeIn 0.5s ease backwards;
+  }
+
+  .node:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  @keyframes nodeIn {
+    from { opacity: 0; transform: scale(0.9) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .node-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .node-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 3px;
+    white-space: nowrap;
+  }
+
+  .node-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  /* Node color variants */
+  .node--blue { border-color: rgba(59, 130, 246, 0.25); }
+  .node--blue:hover { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 12px 40px rgba(59, 130, 246, 0.1); }
+  .node--blue .node-title { color: #93c5fd; }
+
+  .node--cyan { border-color: rgba(6, 182, 212, 0.25); }
+  .node--cyan:hover { border-color: rgba(6, 182, 212, 0.5); box-shadow: 0 12px 40px rgba(6, 182, 212, 0.1); }
+  .node--cyan .node-title { color: #67e8f9; }
+
+  .node--purple { border-color: rgba(139, 92, 246, 0.25); }
+  .node--purple:hover { border-color: rgba(139, 92, 246, 0.5); box-shadow: 0 12px 40px rgba(139, 92, 246, 0.1); }
+  .node--purple .node-title { color: #c4b5fd; }
+
+  .node--green { border-color: rgba(16, 185, 129, 0.25); }
+  .node--green:hover { border-color: rgba(16, 185, 129, 0.5); box-shadow: 0 12px 40px rgba(16, 185, 129, 0.1); }
+  .node--green .node-title { color: #6ee7b7; }
+
+  .node--orange { border-color: rgba(245, 158, 11, 0.25); }
+  .node--orange:hover { border-color: rgba(245, 158, 11, 0.5); box-shadow: 0 12px 40px rgba(245, 158, 11, 0.1); }
+  .node--orange .node-title { color: #fcd34d; }
+
+  .node--pink { border-color: rgba(236, 72, 153, 0.25); }
+  .node--pink:hover { border-color: rgba(236, 72, 153, 0.5); box-shadow: 0 12px 40px rgba(236, 72, 153, 0.1); }
+  .node--pink .node-title { color: #f9a8d4; }
+
+  /* ── AKS Cluster Group ── */
+  .cluster-box {
+    position: absolute;
+    border: 1.5px dashed rgba(59, 130, 246, 0.2);
+    border-radius: 20px;
+    background: rgba(59, 130, 246, 0.02);
+    z-index: 1;
+  }
+
+  .cluster-label {
+    position: absolute;
+    top: 14px;
+    left: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    opacity: 0.7;
+  }
+
+  /* ── Arrow labels ── */
+  .arrow-label {
+    position: absolute;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    z-index: 3;
+  }
+
+  /* ── Platform footer ── */
+  .platform-bar {
+    margin-top: 32px;
+    padding: 16px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    animation: nodeIn 0.5s ease 0.8s backwards;
+  }
+
+  .platform-bar-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+
+  .chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .chip--blue { color: #93c5fd; border-color: rgba(59,130,246,0.2); background: rgba(59,130,246,0.06); }
+  .chip--green { color: #6ee7b7; border-color: rgba(16,185,129,0.2); background: rgba(16,185,129,0.06); }
+  .chip--purple { color: #c4b5fd; border-color: rgba(139,92,246,0.2); background: rgba(139,92,246,0.06); }
+  .chip--orange { color: #fcd34d; border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.06); }
+  .chip--cyan { color: #67e8f9; border-color: rgba(6,182,212,0.2); background: rgba(6,182,212,0.06); }
+  .chip--pink { color: #f9a8d4; border-color: rgba(236,72,153,0.2); background: rgba(236,72,153,0.06); }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .diagram { transform: scale(0.7); transform-origin: top center; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<div class="container">
+  <header>
+    <div class="badge">Architecture Overview</div>
+    <h1>Demo App CI/CD Pipeline Architecture</h1>
+    <p class="subtitle">GitOps-driven AKS platform · <a href="https://github.com/thebuildverse/azure-platform-infrastructure">thebuildverse/azure-platform-infrastructure</a></p>
+  </header>
+
+  <div class="diagram" id="diagram">
+    <!-- SVG Connectors drawn by JS -->
+    <svg class="connectors" id="connectors"></svg>
+
+    <!-- Row 1: Developer → GitHub → GitHub Actions -->
+    <div class="node node--green" id="developer" style="left:40px; top:30px; animation-delay:0.1s;">
+      <span class="node-icon">👨‍💻</span>
+      <div class="node-title">Developer</div>
+      <div class="node-desc">git push</div>
+    </div>
+
+    <div class="node node--purple" id="github" style="left:280px; top:30px; animation-delay:0.15s;">
+      <span class="node-icon">📦</span>
+      <div class="node-title">GitHub Repo</div>
+      <div class="node-desc">source + manifests</div>
+    </div>
+
+    <div class="node node--blue" id="ghactions" style="left:540px; top:30px; animation-delay:0.2s;">
+      <span class="node-icon">⚡</span>
+      <div class="node-title">GitHub Actions</div>
+      <div class="node-desc">CI Pipeline</div>
+    </div>
+
+    <!-- Row 2: ACR -->
+    <div class="node node--cyan" id="acr" style="left:540px; top:200px; animation-delay:0.3s;">
+      <span class="node-icon">🐳</span>
+      <div class="node-title">Azure Container Registry</div>
+      <div class="node-desc">ACR · container images</div>
+    </div>
+
+    <!-- Row 2: ArgoCD -->
+    <div class="node node--orange" id="argocd" style="left:280px; top:200px; animation-delay:0.25s;">
+      <span class="node-icon">🔄</span>
+      <div class="node-title">ArgoCD</div>
+      <div class="node-desc">watches manifests · GitOps</div>
+    </div>
+
+    <!-- AKS Cluster boundary -->
+    <div class="cluster-box" style="left:120px; top:350px; width:680px; height:260px;">
+      <span class="cluster-label">☸ Azure AKS Cluster</span>
+    </div>
+
+    <!-- Inside AKS: App Pods -->
+    <div class="node node--blue" id="apppods" style="left:160px; top:410px; animation-delay:0.4s;">
+      <span class="node-icon">🚀</span>
+      <div class="node-title">App Pods</div>
+      <div class="node-desc">nginx · workloads</div>
+    </div>
+
+    <!-- Inside AKS: ESO -->
+    <div class="node node--pink" id="eso" style="left:420px; top:410px; animation-delay:0.45s;">
+      <span class="node-icon">🔐</span>
+      <div class="node-title">External Secrets</div>
+      <div class="node-desc">Operator · syncs secrets</div>
+    </div>
+
+    <!-- Inside AKS: Monitoring -->
+    <div class="node node--green" id="monitoring" style="left:660px; top:410px; animation-delay:0.5s;">
+      <span class="node-icon">📊</span>
+      <div class="node-title">Monitoring</div>
+      <div class="node-desc">Prometheus · Grafana</div>
+    </div>
+
+    <!-- Azure Key Vault -->
+    <div class="node node--orange" id="keyvault" style="left:420px; top:700px; animation-delay:0.55s;">
+      <span class="node-icon">🔑</span>
+      <div class="node-title">Azure Key Vault</div>
+      <div class="node-desc">secrets store</div>
+    </div>
+
+    <!-- Arrow Labels -->
+    <div class="arrow-label" id="lbl-push" style="left:175px; top:50px;">git push</div>
+    <div class="arrow-label" id="lbl-trigger" style="left:445px; top:50px;">trigger</div>
+    <div class="arrow-label" id="lbl-docker" style="left:620px; top:130px;">docker push</div>
+    <div class="arrow-label" id="lbl-watch" style="left:295px; top:130px;">manifests updated</div>
+    <div class="arrow-label" id="lbl-sync" style="left:225px; top:310px;">sync</div>
+    <div class="arrow-label" id="lbl-pull" style="left:540px; top:340px;">image pull</div>
+    <div class="arrow-label" id="lbl-secrets" style="left:455px; top:640px;">fetch secrets</div>
+    <div class="arrow-label" id="lbl-inject" style="left:300px; top:440px;">inject secrets</div>
+  </div>
+
+  <!-- SVG arrow drawing -->
+  <script>
+    const svg = document.getElementById('connectors');
+    const diagram = document.getElementById('diagram');
+
+    function getCenter(id) {
+      const el = document.getElementById(id);
+      const dr = diagram.getBoundingClientRect();
+      const er = el.getBoundingClientRect();
+      return {
+        x: er.left - dr.left + er.width / 2,
+        y: er.top - dr.top + er.height / 2,
+        top: er.top - dr.top,
+        bottom: er.top - dr.top + er.height,
+        left: er.left - dr.left,
+        right: er.left - dr.left + er.width,
+      };
+    }
+
+    function arrow(from, to, color, fromSide='right', toSide='left') {
+      const a = getCenter(from);
+      const b = getCenter(to);
+      let x1, y1, x2, y2;
+
+      if (fromSide === 'right') { x1 = a.right; y1 = a.top + (a.bottom - a.top)/2; }
+      else if (fromSide === 'bottom') { x1 = a.x; y1 = a.bottom; }
+      else { x1 = a.left; y1 = a.top + (a.bottom - a.top)/2; }
+
+      if (toSide === 'left') { x2 = b.left; y2 = b.top + (b.bottom - b.top)/2; }
+      else if (toSide === 'top') { x2 = b.x; y2 = b.top; }
+      else if (toSide === 'bottom') { x2 = b.x; y2 = b.bottom; }
+      else { x2 = b.right; y2 = b.top + (b.bottom - b.top)/2; }
+
+      const mx = (x1 + x2) / 2;
+      const my = (y1 + y2) / 2;
+
+      let d;
+      if (fromSide === 'bottom' && toSide === 'top') {
+        d = `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
+      } else if (fromSide === 'right' && toSide === 'left') {
+        d = `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+      } else if (fromSide === 'right' && toSide === 'top') {
+        d = `M${x1},${y1} C${mx},${y1} ${x2},${y1} ${x2},${y2}`;
+      } else if (fromSide === 'bottom' && toSide === 'left') {
+        d = `M${x1},${y1} C${x1},${my} ${mx},${y2} ${x2},${y2}`;
+      } else {
+        d = `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+      }
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', '2');
+      path.setAttribute('stroke-dasharray', '6,4');
+      path.setAttribute('opacity', '0.5');
+
+      // Arrowhead
+      const marker = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      marker.setAttribute('cx', x2);
+      marker.setAttribute('cy', y2);
+      marker.setAttribute('r', '4');
+      marker.setAttribute('fill', color);
+      marker.setAttribute('opacity', '0.7');
+
+      svg.appendChild(path);
+      svg.appendChild(marker);
+    }
+
+    // Draw connections
+    arrow('developer', 'github', '#10b981', 'right', 'left');
+    arrow('github', 'ghactions', '#8b5cf6', 'right', 'left');
+    arrow('ghactions', 'acr', '#3b82f6', 'bottom', 'top');
+    arrow('github', 'argocd', '#f59e0b', 'bottom', 'top');
+    arrow('argocd', 'apppods', '#f59e0b', 'bottom', 'top');
+    arrow('acr', 'apppods', '#06b6d4', 'bottom', 'top');
+    arrow('eso', 'keyvault', '#ec4899', 'bottom', 'top');
+    arrow('eso', 'apppods', '#ec4899', 'left', 'right');
+  </script>
+
+  <!-- Platform components bar -->
+  <div class="platform-bar">
+    <span class="platform-bar-title">Platform Components →</span>
+    <span class="chip chip--orange">ArgoCD</span>
+    <span class="chip chip--cyan">Cilium CNI</span>
+    <span class="chip chip--green">cert-manager</span>
+    <span class="chip chip--blue">external-DNS</span>
+    <span class="chip chip--pink">External Secrets</span>
+    <span class="chip chip--purple">Kyverno</span>
+    <span class="chip chip--green">Prometheus</span>
+    <span class="chip chip--blue">Grafana</span>
+    <span class="chip chip--orange">NGINX Ingress</span>
+  </div>
+</div>
+
+</body>
+</html>

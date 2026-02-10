@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 820" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0e17"/>
+      <stop offset="100%" stop-color="#0d1225"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7" fill="none" stroke="#10b981" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7" fill="none" stroke="#06b6d4" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrow-pink" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7" fill="none" stroke="#ec4899" stroke-width="1.5"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="920" height="820" rx="12" fill="url(#bg)"/>
+
+  <!-- Subtle grid -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(59,130,246,0.04)" stroke-width="0.5"/>
+  </pattern>
+  <rect width="920" height="820" fill="url(#grid)" rx="12"/>
+
+  <!-- Header -->
+  <text x="460" y="38" text-anchor="middle" font-size="10" letter-spacing="2.5" fill="#06b6d4" font-weight="600">CI/CD PIPELINE</text>
+  <text x="460" y="64" text-anchor="middle" font-size="22" font-weight="700" fill="url(#titleGrad)">Demo App — CI/CD &amp; Deployment Architecture</text>
+  <text x="460" y="86" text-anchor="middle" font-size="11" fill="#64748b">GitOps-driven pipeline · thebuildverse/demo-app → Azure AKS</text>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- ROW 1: Developer → GitHub → GH Actions -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <!-- Developer -->
+  <rect x="50" y="115" width="160" height="80" rx="12" fill="#111827" stroke="rgba(16,185,129,0.25)" stroke-width="1.2"/>
+  <text x="130" y="148" text-anchor="middle" font-size="24">👨‍💻</text>
+  <text x="130" y="168" text-anchor="middle" font-size="13" font-weight="600" fill="#6ee7b7">Developer</text>
+  <text x="130" y="183" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">git push</text>
+
+  <!-- Arrow: Dev → GitHub -->
+  <path d="M210,155 L310,155" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-green)" opacity="0.7"/>
+  <rect x="230" y="140" width="60" height="18" rx="4" fill="#0a0e17" stroke="#1e2d4a" stroke-width="0.8"/>
+  <text x="260" y="153" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">git push</text>
+
+  <!-- GitHub Repo -->
+  <rect x="320" y="115" width="160" height="80" rx="12" fill="#111827" stroke="rgba(139,92,246,0.25)" stroke-width="1.2"/>
+  <text x="400" y="148" text-anchor="middle" font-size="24">📦</text>
+  <text x="400" y="168" text-anchor="middle" font-size="13" font-weight="600" fill="#c4b5fd">GitHub Repo</text>
+  <text x="400" y="183" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">source + manifests</text>
+
+  <!-- Arrow: GitHub → GH Actions -->
+  <path d="M480,155 L580,155" fill="none" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-purple)" opacity="0.7"/>
+  <rect x="505" y="140" width="50" height="18" rx="4" fill="#0a0e17" stroke="#1e2d4a" stroke-width="0.8"/>
+  <text x="530" y="153" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">trigger</text>
+
+  <!-- GitHub Actions -->
+  <rect x="590" y="115" width="180" height="80" rx="12" fill="#111827" stroke="rgba(59,130,246,0.25)" stroke-width="1.2"/>
+  <text x="680" y="148" text-anchor="middle" font-size="24">⚡</text>
+  <text x="680" y="168" text-anchor="middle" font-size="13" font-weight="600" fill="#93c5fd">GitHub Actions</text>
+  <text x="680" y="183" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">CI Pipeline</text>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- ROW 2: ArgoCD + ACR            -->
+  <!-- ═══════════════════════════════ -->
+
+  <!-- Arrow: GitHub → ArgoCD (down) -->
+  <path d="M400,195 L400,260" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-orange)" opacity="0.7"/>
+  <rect x="335" y="215" width="115" height="18" rx="4" fill="#0a0e17" stroke="#1e2d4a" stroke-width="0.8"/>
+  <text x="393" y="228" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">manifests updated</text>
+
+  <!-- Arrow: GH Actions → ACR (down) -->
+  <path d="M680,195 L680,260" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-blue)" opacity="0.7"/>
+  <rect x="643" y="215" width="75" height="18" rx="4" fill="#0a0e17" stroke="#1e2d4a" stroke-width="0.8"/>
+  <text x="680" y="228" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">docker push</text>
+
+  <!-- ArgoCD -->
+  <rect x="310" y="270" width="180" height="80" rx="12" fill="#111827" stroke="rgba(245,158,11,0.25)" stroke-width="1.2"/>
+  <text x="400" y="303" text-anchor="middle" font-size="24">🔄</text>
+  <text x="400" y="323" text-anchor="middle" font-size="13" font-weight="600" fill="#fcd34d">ArgoCD</text>
+  <text x="400" y="338" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">watches manifests · GitOps</text>
+
+  <!-- ACR -->
+  <rect x="580" y="270" width="200" height="80" rx="12" fill="#111827" stroke="rgba(6,182,212,0.25)" stroke-width="1.2"/>
+  <text x="680" y="303" text-anchor="middle" font-size="24">🐳</text>
+  <text x="680" y="323" text-anchor="middle" font-size="13" font-weight="600" fill="#67e8f9">Azure Container Registry</text>
+  <text x="680" y="338" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">ACR · container images</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- AKS CLUSTER BOUNDARY                        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="70" y="405" width="780" height="255" rx="16" fill="rgba(59,130,246,0.02)" stroke="rgba(59,130,246,0.18)" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="95" y="428" font-size="10" font-weight="600" letter-spacing="1.5" fill="#3b82f6" opacity="0.7" font-family="monospace">☸ AZURE AKS CLUSTER</text>
+
+  <!-- Arrow: ArgoCD → App Pods (down into cluster) -->
+  <path d="M370,350 L250,440" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-orange)" opacity="0.7"/>
+  <rect x="270" y="380" width="40" height="18" rx="4" fill="#0a0e17" stroke="#1e2d4a" stroke-width="0.8"/>
+  <text x="290" y="393" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">sync</text>
+
+  <!-- Arrow: ACR → App Pods (down into cluster) -->
+  <path d="M640,350 L300,455" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-cyan)" opacity="0.6"/>
+  <rect x="440" y="380" width="70" height="18" rx="4" fill="#0a0e17" stroke="#1e2d4a" stroke-width="0.8"/>
+  <text x="475" y="393" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">image pull</text>
+
+  <!-- App Pods -->
+  <rect x="120" y="450" width="170" height="80" rx="12" fill="#111827" stroke="rgba(59,130,246,0.25)" stroke-width="1.2"/>
+  <text x="205" y="483" text-anchor="middle" font-size="24">🚀</text>
+  <text x="205" y="503" text-anchor="middle" font-size="13" font-weight="600" fill="#93c5fd">App Pods</text>
+  <text x="205" y="518" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">nginx · workloads</text>
+
+  <!-- External Secrets -->
+  <rect x="375" y="450" width="180" height="80" rx="12" fill="#111827" stroke="rgba(236,72,153,0.25)" stroke-width="1.2"/>
+  <text x="465" y="483" text-anchor="middle" font-size="24">🔐</text>
+  <text x="465" y="503" text-anchor="middle" font-size="13" font-weight="600" fill="#f9a8d4">External Secrets</text>
+  <text x="465" y="518" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">Operator · syncs secrets</text>
+
+  <!-- Monitoring -->
+  <rect x="630" y="450" width="170" height="80" rx="12" fill="#111827" stroke="rgba(16,185,129,0.25)" stroke-width="1.2"/>
+  <text x="715" y="483" text-anchor="middle" font-size="24">📊</text>
+  <text x="715" y="503" text-anchor="middle" font-size="13" font-weight="600" fill="#6ee7b7">Monitoring</text>
+  <text x="715" y="518" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">Prometheus · Grafana</text>
+
+  <!-- Arrow: ESO → App Pods (inject secrets) -->
+  <path d="M375,490 L290,490" fill="none" stroke="#ec4899" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-pink)" opacity="0.7"/>
+  <rect x="300" y="476" width="72" height="18" rx="4" fill="#0a0e17" stroke="#1e2d4a" stroke-width="0.8"/>
+  <text x="336" y="489" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">inject secrets</text>
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- AZURE KEY VAULT (outside cluster)   -->
+  <!-- ═══════════════════════════════════ -->
+
+  <!-- Arrow: ESO → Key Vault (down) -->
+  <path d="M465,530 L465,690" fill="none" stroke="#ec4899" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-pink)" opacity="0.7"/>
+  <rect x="425" y="610" width="80" height="18" rx="4" fill="#0a0e17" stroke="#1e2d4a" stroke-width="0.8"/>
+  <text x="465" y="623" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">fetch secrets</text>
+
+  <!-- Key Vault -->
+  <rect x="375" y="700" width="180" height="80" rx="12" fill="#111827" stroke="rgba(245,158,11,0.25)" stroke-width="1.2"/>
+  <text x="465" y="733" text-anchor="middle" font-size="24">🔑</text>
+  <text x="465" y="753" text-anchor="middle" font-size="13" font-weight="600" fill="#fcd34d">Azure Key Vault</text>
+  <text x="465" y="768" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">secrets store</text>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PLATFORM COMPONENTS BAR                 -->
+  <!-- ═══════════════════════════════════════ -->
+  <rect x="50" y="798" width="820" height="3" rx="1.5" fill="rgba(59,130,246,0.1)"/>
+
+  <!-- Platform ref text -->
+  <text x="460" y="815" text-anchor="middle" font-size="9" fill="#3d5070" font-family="monospace">
+    Platform components (ArgoCD, ESO, cert-manager, Cilium, Kyverno, etc.) provisioned by: thebuildverse/azure-platform-infrastructure
+  </text>
+</svg>
