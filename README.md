@@ -203,7 +203,8 @@ docker run -p 8080:80 -e SECRET_MESSAGE="Hello from local dev!" demo-app
 
 ![CI/CD Pipeline Architecture](assets/demo-app-cicd-pipeline.svg)
 
-> Platform components (ArgoCD, ESO, cert-manager, Ingress, Kyverno, etc.) are provisioned by [`azure-platform-infrastructure`](https://github.com/thebuildverse/azure-platform-infrastructure).
+
+> An interactive version of this diagram is also available at [`https://bytiv.github.io/diagrams/pipeline-architecture.html`](https://bytiv.github.io/diagrams/pipeline-architecture.html).
 
 ---
 
