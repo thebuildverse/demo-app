@@ -12,6 +12,15 @@ A GitOps-powered demo application deployed on **Azure AKS** via **ArgoCD**, with
 
 ---
 
+## Architecture
+
+![CI/CD Pipeline Architecture](assets/demo-app-cicd-pipeline.svg)
+
+
+> An interactive version of this diagram is also available at [`https://bytiv.github.io/diagrams/pipeline-architecture.html`](https://bytiv.github.io/diagrams/pipeline-architecture.html).
+
+---
+
 ## Project Structure
 
 ```
@@ -196,15 +205,6 @@ docker run -p 8080:80 -e SECRET_MESSAGE="Hello from local dev!" demo-app
 - **Change replicas** — edit `k8s/base/deployment.yaml`
 - **Add more secrets** — add entries to `external-secret.yaml` and reference them in the deployment's `envFrom`
 - **Change the app** — edit files in `src/` and push; the pipeline handles everything else
-
----
-
-## Architecture
-
-![CI/CD Pipeline Architecture](assets/demo-app-cicd-pipeline.svg)
-
-
-> An interactive version of this diagram is also available at [`https://bytiv.github.io/diagrams/pipeline-architecture.html`](https://bytiv.github.io/diagrams/pipeline-architecture.html).
 
 ---
 
