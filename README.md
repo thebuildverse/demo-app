@@ -114,7 +114,7 @@ This app demonstrates External Secrets Operator pulling a secret from Key Vault 
 az keyvault secret set \
   --vault-name <YOUR_KEYVAULT_NAME> \
   --name "secret-message" \
-  --value "Hello from Azure Key Vault! 🔐"
+  --value "Hello from Azure Key Vault!"
 ```
 
 The value can be anything — it will appear in the app's **Vault Secret** section.
