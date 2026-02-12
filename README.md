@@ -9,6 +9,7 @@ A GitOps-powered demo application deployed on **Azure AKS** via **ArgoCD**, with
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)
 ![Azure](https://img.shields.io/badge/Azure-0078D4?logo=microsoft-azure&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![External Secrets Operator](https://img.shields.io/badge/External_Secrets_Operator-6C47FF?logo=kubernetes&logoColor=white)
 
 ---
 
